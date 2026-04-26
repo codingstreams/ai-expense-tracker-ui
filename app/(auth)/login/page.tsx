@@ -10,9 +10,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const LoginPage = () => {
-  // const [formData, setFormData] = useState<AuthFormData>({ email: "", password: "" })
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) })
+  const { register, handleSubmit, formState: { errors, isValid, isSubmitting } } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) })
 
   const { login } = useAuth()
   const router = useRouter()
@@ -43,9 +42,10 @@ const LoginPage = () => {
                 <LockIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                 <input {...register('password')} type="password"
                   placeholder="•••••••" className="w-full bg-slate-950/50 border border-slate-800 rounded-xl py-3 pl-12 pr-4 text-white outline-none focus:border-purple-500 transition-all" />
+                {errors.password?.message && <p>{errors.password?.message}</p>}
               </div>
             </div>
-            <button className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all" type="submit">
+            <button className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all" type="submit" disabled={!isValid || isSubmitting}>
               Sign In <ArrowRight size={18} />
             </button>
           </div>
