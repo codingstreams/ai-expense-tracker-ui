@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Transaction } from "@/api/model/Transaction";
 import { getTransations } from "@/api/transactions";
 import { TransactionItem } from "@/components/dashboard/TransactionItem";
+import { CategorySpend } from "@/components/dashboard/CategorySpend";
 
 const DashboardPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -92,6 +93,12 @@ const DashboardPage = () => {
                 ))
               )}
             </div>
+          </div>
+        </div>
+        <div className="lg:col-span-4">
+          <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-6 h-full flex flex-col">
+            <h3 className="text-slate-400 font-bold tracking-wide mb-4">Category-wise Spend</h3>
+            <CategorySpend />
           </div>
         </div>
 
