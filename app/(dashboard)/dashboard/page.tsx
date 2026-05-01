@@ -2,6 +2,7 @@
 
 import AiInput from "@/components/dashboard/AiInput";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import WeeklyGraphTrend from "@/components/dashboard/WeeklyGraphTrend";
 
 const DashboardPage = () => {
 
@@ -19,6 +20,23 @@ const DashboardPage = () => {
           onProcess={() => { }}
         />
       </section>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8 p-6 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-xl h-[300px]">
+          <WeeklyGraphTrend data={[
+            { day: 'Mon', spent: 1200 },
+            { day: 'Tue', spent: 900 },
+            { day: 'Wed', spent: 2200 },
+            { day: 'Thu', spent: 400 },
+            { day: 'Fri', spent: 1800 },
+            { day: 'Sat', spent: 3500 },
+            { day: 'Sun', spent: 2100 },
+          ]} />
+        </div>
+        <div className="lg:col-span-4 bg-[#0f172a] border border-slate-800 rounded-2xl p-6 shadow-xl">
+
+        </div>
+      </div>
 
     </div>
   )
