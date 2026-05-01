@@ -4,8 +4,18 @@ import AiInput from "@/components/dashboard/AiInput";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import WalletCard from "@/components/dashboard/WalletCard";
 import WeeklyGraphTrend from "@/components/dashboard/WeeklyGraphTrend";
+import { useEffect, useState } from "react";
+import { Transaction } from "@/api/model/Transaction";
+import { getTransations } from "@/api/transactions";
+import { TransactionItem } from "@/components/dashboard/TransactionItem";
 
 const DashboardPage = () => {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    getTransations().then(txns => { setLoading(false); setTransactions(txns) });
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-8 pb-20">
@@ -51,6 +61,40 @@ const DashboardPage = () => {
             />
           </div>
         </div>
+      </div>
+
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <div className="lg:col-span-8">
+          <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-6 h-full flex flex-col">
+            {/* Header with View All Button */}
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-slate-400 font-medium tracking-wide">Recent Activity</h3>
+              <button
+                onClick={() => console.log("Navigate to Transactions")}
+                className="text-xs font-semibold text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 px-3 py-1.5 rounded-lg transition-all border border-purple-500/20"
+              >
+                View All
+              </button>
+            </div>
+
+            {/* Transaction List */}
+            <div className="space-y-1 overflow-hidden">
+              {loading ? (
+                // Skeleton Loader
+                [1, 2, 3, 4].map(i => (
+                  <div key={i} className="h-16 w-full bg-slate-800/20 animate-pulse rounded-2xl" />
+                ))
+              ) : (
+                transactions.map((tx) => (
+                  <TransactionItem key={tx.id} {...tx} />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
