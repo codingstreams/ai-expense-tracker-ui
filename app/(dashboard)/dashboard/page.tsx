@@ -89,7 +89,7 @@ const DashboardPage = () => {
                 ))
               ) : (
                 transactions.map((tx) => (
-                  <TransactionItem key={tx.id} {...tx} />
+                  <TransactionItem key={tx.transactionId} {...tx} />
                 ))
               )}
             </div>

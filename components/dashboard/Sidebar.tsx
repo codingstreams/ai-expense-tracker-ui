@@ -4,6 +4,7 @@ import Link from "next/link";
 import Logo from "../Logo";
 import { LayoutDashboard, LineChart, LogOutIcon, User2 } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -13,6 +14,8 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+
+  const { logout } = useAuth();
 
   return (
     <aside className="w-20 lg:w-24 h-screen flex flex-col items-center border-r border-purple-500/20 bg-[#0f172a] py-6 sticky top-0">
@@ -42,7 +45,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-auto pb-4">
-        <button className="p-3 rounded-xl text-slate-500 hover:bg-red-500/10 hover:text-red-400 transition-all">
+        <button className="p-3 rounded-xl text-slate-500 hover:bg-red-500/10 hover:text-red-400 transition-all" onClick={logout}>
           <LogOutIcon size={24} />
         </button>
       </div>
