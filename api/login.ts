@@ -1,7 +1,10 @@
 const BASE_URL = "http://localhost:8080"
 
-interface AuthResponse {
-  accessToken: string; expiresInSeconds: number;
+export interface AuthResponse {
+  accessToken: string;
+  tokenType: string;
+  expiresInSeconds: number;
+  onboarded: boolean;
 }
 
 export async function loginWithEmailAndPwd(email: string, password: string): Promise<AuthResponse> {

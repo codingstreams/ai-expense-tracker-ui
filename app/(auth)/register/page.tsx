@@ -19,9 +19,13 @@ const RegisterPage = () => {
   const handleResgister = async (data: RegisterOutput) => {
     const authResponse = await registerWithEmailAndPwd(data.name, data.email, data.password)
 
-    login(authResponse.accessToken)
+    login(authResponse.accessToken, authResponse.onboarded)
 
-    router.push("/dashboard")
+    if (authResponse.onboarded) {
+      router.push("/dashboard")
+    } else {
+      router.push("/onboarding")
+    }
   };
 
   return (

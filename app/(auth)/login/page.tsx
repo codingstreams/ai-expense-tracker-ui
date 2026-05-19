@@ -19,9 +19,13 @@ const LoginPage = () => {
   const handleLogin = async (data: LoginOutput) => {
     const authResponse = await loginWithEmailAndPwd(data.email, data.password)
 
-    login(authResponse.accessToken)
+    login(authResponse.accessToken, authResponse.onboarded)
 
-    router.push("/dashboard")
+    if (authResponse.onboarded) {
+      router.push("/dashboard")
+    } else {
+      router.push("/onboarding")
+    }
   };
 
   return (

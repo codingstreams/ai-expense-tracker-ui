@@ -16,11 +16,19 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
 
   const response = await fetch(`${BASE_URL}${endpoint}`, config);
 
-  if (!response.ok) {
-
-    const errorBody = await response.json().catch(() => ({}));
-    throw new Error(errorBody.message || 'Something went wrong');
+  const text = await response.text();
+  let data: any = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      data = text;
+    }
   }
 
-  return response.json();
+  if (!response.ok) {
+    throw new Error(data?.message || 'Something went wrong');
+  }
+
+  return data;
 }

@@ -4,9 +4,11 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 
 interface AuthContextType {
   accessToken: string;
+  onboarded: boolean;
   expirationTime: number;
-  login: (accessToken: string) => void;
+  login: (accessToken: string, onboarded: boolean) => void;
   logout: () => void;
+  setOnboarded: (onboarded: boolean) => void;
   loading: boolean
 }
 
@@ -14,33 +16,50 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string>("");
+  const [onboarded, setOnboardedState] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const storedToken = localStorage.getItem("accessToken")
+    const storedOnboarded = localStorage.getItem("onboarded")
 
     if (storedToken) {
       setAccessToken(storedToken)
     }
+    if (storedOnboarded) {
+      setOnboardedState(storedOnboarded === "true")
+    }
 
     setLoading(false)
-  });
+  }, []);
 
-  const login = (accessToken: string) => {
-    setAccessToken(accessToken);
-    localStorage.setItem("accessToken", accessToken)
+  const login = (token: string, onboardedStatus: boolean) => {
+    setAccessToken(token);
+    setOnboardedState(onboardedStatus);
+    localStorage.setItem("accessToken", token)
+    localStorage.setItem("onboarded", String(onboardedStatus))
   };
-
 
   const logout = () => {
     setAccessToken("");
+    setOnboardedState(false);
     localStorage.removeItem("accessToken")
+    localStorage.removeItem("onboarded")
+  };
+
+  const setOnboarded = (onboardedStatus: boolean) => {
+    setOnboardedState(onboardedStatus);
+    localStorage.setItem("onboarded", String(onboardedStatus));
   };
 
   return (
     <AuthContext.Provider value={{
-      accessToken: accessToken, expirationTime: 0, login: login,
+      accessToken: accessToken,
+      onboarded: onboarded,
+      expirationTime: 0,
+      login: login,
       logout: logout,
+      setOnboarded: setOnboarded,
       loading: loading
     }}>
       {children}
