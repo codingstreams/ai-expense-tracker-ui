@@ -1,13 +1,14 @@
 'use client'
 
-import { Sparkles, Send } from "lucide-react";
+import { Sparkles, Send, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 
 interface PromptInputProps {
   onProcess: (query: string) => void;
+  onManualEntry: () => void;
 }
 
-export default function AiInput({ onProcess }: PromptInputProps) {
+export default function AiInput({ onProcess, onManualEntry }: PromptInputProps) {
   const [query, setQuery] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,6 +36,15 @@ export default function AiInput({ onProcess }: PromptInputProps) {
             className="flex-1 bg-transparent border-none outline-none py-4 px-2 text-slate-200 placeholder:text-slate-500 text-lg"
             placeholder="Eg: spent 2000 on groceries today at Zepto"
           />
+
+          <button
+            type="button"
+            onClick={onManualEntry}
+            className="p-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all border border-slate-700"
+            title="Manual Entry"
+          >
+            <SlidersHorizontal size={20} />
+          </button>
 
           {/* AI Process Button */}
           <button

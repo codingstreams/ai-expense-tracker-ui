@@ -9,10 +9,12 @@ import { Transaction } from "@/api/model/Transaction";
 import { getTransations } from "@/api/transactions";
 import { TransactionItem } from "@/components/dashboard/TransactionItem";
 import { CategorySpend } from "@/components/dashboard/CategorySpend";
+import { ManualEntryModal } from "@/components/dashboard/ManualEntryModal";
 
 const DashboardPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     getTransations().then(txns => { setLoading(false); setTransactions(txns) });
@@ -30,8 +32,14 @@ const DashboardPage = () => {
 
         <AiInput
           onProcess={() => { }}
+          onManualEntry={() => setIsModalOpen(true)}
         />
       </section>
+
+      <ManualEntryModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 p-6 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-xl h-[300px]">
