@@ -41,10 +41,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
+    console.log("AuthContext: logging out, clearing state, and redirecting...");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("onboarded");
     setAccessToken("");
     setOnboardedState(false);
-    localStorage.removeItem("accessToken")
-    localStorage.removeItem("onboarded")
+    window.location.href = "/login";
   };
 
   const setOnboarded = (onboardedStatus: boolean) => {

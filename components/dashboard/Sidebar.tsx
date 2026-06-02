@@ -18,7 +18,7 @@ export default function Sidebar() {
   const { logout } = useAuth();
 
   return (
-    <aside className="w-20 lg:w-24 h-screen flex flex-col items-center border-r border-purple-500/20 bg-[#0f172a] py-6 sticky top-0">
+    <aside className="w-20 lg:w-24 h-screen flex flex-col items-center border-r border-purple-500/20 bg-[#0f172a] py-6 sticky top-0 z-30">
 
       <Logo />
       <nav className="flex-1 w-full px-2">
@@ -45,7 +45,11 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-auto pb-4">
-        <button className="p-3 rounded-xl text-slate-500 hover:bg-red-500/10 hover:text-red-400 transition-all" onClick={logout}>
+        <button
+          type="button"
+          className="p-3 rounded-xl text-slate-500 hover:bg-red-500/10 hover:text-red-400 transition-all"
+          onClick={logout}
+        >
           <LogOutIcon size={24} />
         </button>
       </div>
