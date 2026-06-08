@@ -74,7 +74,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-10 pb-20">
+    <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-10 pb-20 animate-slide-up">
       <header>
         <h1 className="text-3xl font-bold text-white">Account Settings</h1>
         <p className="text-slate-500 text-sm mt-1">Manage your preferences and linked accounts.</p>

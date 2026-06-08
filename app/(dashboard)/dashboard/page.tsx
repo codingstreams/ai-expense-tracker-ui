@@ -50,7 +50,7 @@ const DashboardPage = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-8 pb-20 animate-in fade-in duration-500">
+    <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-8 pb-20 animate-slide-up">
       {/* gradient background with blur at top right and bottom left */}
       <div className="absolute -z-10 w-[32rem] h-[32rem] top-0 right-0 bg-gradient-to-br from-purple-600/15 to-indigo-600/5 blur-[120px] pointer-events-none" />
       <div className="absolute -z-10 w-[32rem] h-[32rem] bottom-0 left-0 bg-gradient-to-br from-indigo-600/15 to-purple-600/5 blur-[120px] pointer-events-none" />
