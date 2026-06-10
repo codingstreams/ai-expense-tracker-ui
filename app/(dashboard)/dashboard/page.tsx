@@ -10,19 +10,57 @@ import { getTransations } from "@/api/transactions";
 import { TransactionItem } from "@/components/dashboard/TransactionItem";
 import { CategorySpend } from "@/components/dashboard/CategorySpend";
 import { ManualEntryModal } from "@/components/dashboard/ManualEntryModal";
+import { Account } from "@/api/model/Account";
+import { getAccounts } from "@/api/accounts";
+import { getCategoryDistribution, getDailyCashFlow } from "@/api/analytics";
 
 const DashboardPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [monthlyExpenses, setMonthlyExpenses] = useState<number>(0);
+  const [weeklyData, setWeeklyData] = useState<{ day: string; spent: number }[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'ALL' | 'EXPENSE' | 'INCOME' | 'TRANSFER'>('ALL');
   const [greeting, setGreeting] = useState("Hello");
 
-  const fetchTransactions = () => {
-    getTransations().then(txns => { 
+  const fetchTransactions = async () => {
+    try {
+      const txns = await getTransations();
       setTransactions(txns);
+
+      const userAccounts = await getAccounts();
+      setAccounts(userAccounts);
+
+      // Fetch actual monthly expenses of the current month
+      const today = new Date();
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+      const firstDayStr = `${firstDay.getFullYear()}-${String(firstDay.getMonth() + 1).padStart(2, '0')}-01`;
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      
+      const distribution = await getCategoryDistribution(firstDayStr, todayStr);
+      const totalSpentThisMonth = distribution.reduce((sum, item) => sum + item.amount, 0);
+      setMonthlyExpenses(totalSpentThisMonth);
+
+      // Fetch actual weekly graph trend for past 7 days
+      const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const sevenDaysAgoStr = `${sevenDaysAgo.getFullYear()}-${String(sevenDaysAgo.getMonth() + 1).padStart(2, '0')}-${String(sevenDaysAgo.getDate()).padStart(2, '0')}`;
+      
+      const weeklyCashFlow = await getDailyCashFlow(sevenDaysAgoStr, todayStr);
+      const formattedWeekly = weeklyCashFlow.map(item => {
+        const date = new Date(item.transactionDate);
+        const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+        return {
+          day: dayName,
+          spent: Math.abs(item.expense)
+        };
+      });
+      setWeeklyData(formattedWeekly);
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
   useEffect(() => {
@@ -36,13 +74,9 @@ const DashboardPage = () => {
     setGreeting(dynamicGreeting);
   }, []);
 
-  // Dynamic calculations based on transaction list
-  const incomeSum = transactions.filter(t => t.type === 'INCOME').reduce((sum, t) => sum + t.amount, 0);
-  const expenseSum = transactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
-  
-  const totalBalance = Math.max(21000 + incomeSum - expenseSum, 0);
-  const savingsBalance = 11000 + incomeSum * 0.4; // 40% of income goes to savings mock
-  const monthlyExpenses = 10000 + expenseSum;
+  // Dynamic calculations based on actual backend data
+  const totalBalance = accounts.reduce((sum, acc) => sum + acc.amount, 0);
+  const savingsBalance = accounts.filter(acc => acc.type === 'Savings').reduce((sum, acc) => sum + acc.amount, 0);
 
   const filteredTransactions = transactions.filter(tx => {
     if (activeTab === 'ALL') return true;
@@ -75,15 +109,11 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         <div className="lg:col-span-8 p-6 rounded-3xl bg-[#0f172a]/60 border border-slate-800/80 shadow-xl backdrop-blur-sm flex flex-col min-h-[300px]">
           <div className="flex-1 w-full relative min-h-0">
-            <WeeklyGraphTrend data={[
-              { day: 'Mon', spent: 1200 },
-              { day: 'Tue', spent: 900 },
-              { day: 'Wed', spent: 2200 },
-              { day: 'Thu', spent: 400 },
-              { day: 'Fri', spent: 1800 },
-              { day: 'Sat', spent: 3500 },
-              { day: 'Sun', spent: 2100 },
-            ]} />
+            {loading ? (
+              <div className="w-full h-full bg-slate-800/10 animate-pulse rounded-3xl" />
+            ) : (
+              <WeeklyGraphTrend data={weeklyData} />
+            )}
           </div>
         </div>
         <div className="lg:col-span-4 flex flex-col justify-between gap-6">

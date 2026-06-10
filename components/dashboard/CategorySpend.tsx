@@ -73,8 +73,16 @@ const CategoryRow = ({ label, amount, limit }: CategoryItemProps) => {
   );
 };
 
-export const CategorySpend = () => {
-  const categories = [
+interface CategorySpendProps {
+  data?: {
+    label: string;
+    amount: number;
+    limit: number;
+  }[];
+}
+
+export const CategorySpend = ({ data }: CategorySpendProps) => {
+  const categories = data || [
     { label: "Food & Drinks", amount: 4500, limit: 6000 },
     { label: "Entertainment", amount: 1200, limit: 3000 },
     { label: "Shopping", amount: 9200, limit: 10000 },
