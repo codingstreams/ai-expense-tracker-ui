@@ -3,6 +3,7 @@
 import { Sparkles, Send, SlidersHorizontal, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { apiFetch } from "../../api/api-client";
+import { useNotification } from "../../context/NotificationContext";
 
 interface PromptInputProps {
   onProcess: (query: string) => void;
@@ -22,6 +23,7 @@ export default function AiInput({ onProcess, onManualEntry }: PromptInputProps) 
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [progressStatus, setProgressStatus] = useState("");
+  const { trackJob } = useNotification();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,7 +47,30 @@ export default function AiInput({ onProcess, onManualEntry }: PromptInputProps) 
       const jobId = task.id;
       setProgressStatus("Queued");
 
-      const submittedQuery = query;
+      trackJob(jobId, {
+        onStatusChange: (status) => {
+          if (status === "PROCESSING") {
+            setProgressStatus("Parsing");
+          }
+        },
+        onComplete: () => {
+          setProgressStatus("Success");
+          onProcess(query);
+          setQuery("");
+          setTimeout(() => {
+            setLoading(false);
+            setProgressStatus("");
+          }, 1500);
+        },
+        onError: (error) => {
+          console.error("AI parsing failed:", error);
+          setProgressStatus("Failed");
+          setTimeout(() => {
+            setLoading(false);
+            setProgressStatus("");
+          }, 1500);
+        }
+      });
 
     } catch (error) {
       console.error("Failed to process AI input:", error);
