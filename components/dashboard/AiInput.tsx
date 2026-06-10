@@ -3,7 +3,6 @@
 import { Sparkles, Send, SlidersHorizontal, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { apiFetch } from "../../api/api-client";
-import { useNotifications } from "@/hooks/useNotifications";
 
 interface PromptInputProps {
   onProcess: (query: string) => void;
@@ -23,7 +22,6 @@ export default function AiInput({ onProcess, onManualEntry }: PromptInputProps) 
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [progressStatus, setProgressStatus] = useState("");
-  const { trackJob } = useNotifications();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -49,31 +47,6 @@ export default function AiInput({ onProcess, onManualEntry }: PromptInputProps) 
 
       const submittedQuery = query;
 
-      trackJob(jobId, {
-        onStatusChange: (status) => {
-          if (status === "PROCESSING") {
-            setProgressStatus("Parsing");
-          } else if (status === "COMPLETED") {
-            setProgressStatus("Success");
-            onProcess(submittedQuery);
-            setQuery("");
-          } else if (status === "FAILED") {
-            setProgressStatus("Failed");
-          }
-        },
-        onComplete: () => {
-          setTimeout(() => {
-            setLoading(false);
-            setProgressStatus("");
-          }, 1500);
-        },
-        onError: () => {
-          setTimeout(() => {
-            setLoading(false);
-            setProgressStatus("");
-          }, 1500);
-        },
-      });
     } catch (error) {
       console.error("Failed to process AI input:", error);
       setProgressStatus("Failed");
@@ -124,10 +97,10 @@ export default function AiInput({ onProcess, onManualEntry }: PromptInputProps) 
               <>
                 <span className="hidden md:inline">
                   {progressStatus === "Submitting" ? "Submitting..." :
-                   progressStatus === "Queued" ? "Queued..." : 
-                   progressStatus === "Parsing" ? "Parsing..." : 
-                   progressStatus === "Success" ? "Success!" : 
-                   progressStatus === "Failed" ? "Failed!" : "Processing..."}
+                    progressStatus === "Queued" ? "Queued..." :
+                      progressStatus === "Parsing" ? "Parsing..." :
+                        progressStatus === "Success" ? "Success!" :
+                          progressStatus === "Failed" ? "Failed!" : "Processing..."}
                 </span>
                 <Loader2 size={18} className="animate-spin" />
               </>
