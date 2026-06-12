@@ -20,7 +20,7 @@ export interface OnboardingRequestDto {
   cardLimit: number | null;
   cashBalance: number | null;
   defaultPaymentModeId: number;
-  languagePreference: "ENGLISH" | "HINDI" | "SPANISH" | "FRENCH";
+  languagePreference: "ENGLISH" | "HINDI";
 }
 
 export async function submitOnboarding(data: OnboardingRequestDto): Promise<{ success: boolean; message?: string }> {
