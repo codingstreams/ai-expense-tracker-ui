@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import Logo from "../Logo";
-import { LayoutDashboard, LineChart, LogOutIcon, User2 } from "lucide-react";
+import { LayoutDashboard, LineChart, LogOutIcon, User2, ArrowRightLeft } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Transactions', href: '/transactions', icon: ArrowRightLeft },
   { name: 'Statistics', href: '/statistics', icon: LineChart },
   { name: 'Profile', href: '/profile', icon: User2 },
 ];

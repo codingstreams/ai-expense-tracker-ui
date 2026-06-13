@@ -7,8 +7,8 @@ import WeeklyGraphTrend from "@/components/dashboard/WeeklyGraphTrend";
 import { useEffect, useState } from "react";
 import { Transaction } from "@/api/model/Transaction";
 import { getTransations } from "@/api/transactions";
-import { TransactionItem } from "@/components/dashboard/TransactionItem";
 import { CategorySpend } from "@/components/dashboard/CategorySpend";
+import RecentActivity from "@/components/dashboard/RecentActivity";
 import { ManualEntryModal } from "@/components/dashboard/ManualEntryModal";
 import { Account } from "@/api/model/Account";
 import { getAccounts } from "@/api/accounts";
@@ -21,7 +21,6 @@ const DashboardPage = () => {
   const [weeklyData, setWeeklyData] = useState<{ day: string; spent: number }[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'ALL' | 'EXPENSE' | 'INCOME' | 'TRANSFER'>('ALL');
   const [greeting, setGreeting] = useState("Hello");
 
   const fetchTransactions = async () => {
@@ -77,11 +76,6 @@ const DashboardPage = () => {
   // Dynamic calculations based on actual backend data
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.amount, 0);
   const savingsBalance = accounts.filter(acc => acc.type === 'Savings').reduce((sum, acc) => sum + acc.amount, 0);
-
-  const filteredTransactions = transactions.filter(tx => {
-    if (activeTab === 'ALL') return true;
-    return tx.type === activeTab;
-  });
 
   return (
     <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-8 pb-20 animate-slide-up">
@@ -143,51 +137,7 @@ const DashboardPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8">
-          <div className="bg-slate-900/50 border border-slate-800/80 backdrop-blur-sm rounded-3xl p-6 h-full flex flex-col">
-            {/* Header with Tab Filters */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <div className="space-y-1">
-                <h3 className="text-slate-400 font-semibold tracking-wide text-sm uppercase">Recent Activity</h3>
-                <p className="text-[11px] text-slate-500">Filters transactions by types</p>
-              </div>
-
-              {/* Filtering Tabs */}
-              <div className="p-1 bg-slate-950 rounded-xl flex border border-slate-800 text-xs">
-                {(['ALL', 'EXPENSE', 'INCOME', 'TRANSFER'] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-3 py-1.5 font-bold rounded-lg capitalize transition-all ${
-                      activeTab === tab 
-                        ? 'bg-slate-850 text-purple-400 shadow-sm border border-purple-500/10' 
-                        : 'text-slate-500 hover:text-slate-300'
-                    }`}
-                  >
-                    {tab === 'ALL' ? 'All' : tab.toLowerCase()}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Transaction List */}
-            <div className="space-y-1 overflow-hidden flex-1">
-              {loading ? (
-                // Skeleton Loader
-                [1, 2, 3, 4].map(i => (
-                  <div key={i} className="h-16 w-full bg-slate-800/20 animate-pulse rounded-2xl" />
-                ))
-              ) : filteredTransactions.length === 0 ? (
-                <div className="h-48 flex flex-col items-center justify-center text-slate-500 space-y-1">
-                  <p className="text-sm font-semibold">No {activeTab === 'ALL' ? '' : activeTab.toLowerCase()} transactions</p>
-                  <p className="text-xs text-slate-600">Try creating one using manual entry or AI input</p>
-                </div>
-              ) : (
-                filteredTransactions.map((tx) => (
-                  <TransactionItem key={tx.transactionId} {...tx} />
-                ))
-              )}
-            </div>
-          </div>
+          <RecentActivity transactions={transactions} loading={loading} />
         </div>
         <div className="lg:col-span-4">
           <div className="bg-slate-900/50 border border-slate-800/80 backdrop-blur-sm rounded-3xl p-6 h-full flex flex-col">
